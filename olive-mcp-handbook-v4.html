@@ -1389,12 +1389,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     }
     function sopSwitchFlowTab(key) {
       _sopCloseAll();
+      // 存续/运营/产品共用同一张流程图，仅切换 Owner 文案
+      var panelKey = (key === 'yx') ? 'yx' : 'workflow';
+      var ownerMap = {
+        cxy: '吴靖、李菁',
+        yy:  '叶芳、苏芳',
+        cp:  '章可剑、Carl、刘腾飞'
+      };
+      var ownerEl = document.getElementById('sop-biz-owner-label');
+      if (ownerEl) {
+        var owners = ownerMap[key];
+        ownerEl.textContent = owners ? ('业务（Owner：' + owners + '）') : '业务';
+      }
       document.querySelectorAll('[data-sop-flow-tab]').forEach(function(btn) {
         btn.classList.toggle('active', btn.getAttribute('data-sop-flow-tab') === key);
         btn.setAttribute('aria-selected', btn.getAttribute('data-sop-flow-tab') === key ? 'true' : 'false');
       });
       document.querySelectorAll('[data-sop-flow-panel]').forEach(function(panel) {
-        panel.classList.toggle('active', panel.getAttribute('data-sop-flow-panel') === key);
+        panel.classList.toggle('active', panel.getAttribute('data-sop-flow-panel') === panelKey);
       });
     }
     // Close popups on outside click
@@ -1454,17 +1466,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
       <!-- SOP Flow Tabs -->
       <div class="sop-tabs" role="tablist" aria-label="需求到上线全流程 · 分类">
-        <button class="sop-tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="sop-flow-panel-cxy" data-sop-flow-tab="cxy" onclick="sopSwitchFlowTab('cxy')">存续</button>
+        <button class="sop-tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="sop-flow-panel-workflow" data-sop-flow-tab="cxy" onclick="sopSwitchFlowTab('cxy')">存续</button>
         <button class="sop-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="sop-flow-panel-yx" data-sop-flow-tab="yx" onclick="sopSwitchFlowTab('yx')">营销</button>
-        <button class="sop-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="sop-flow-panel-yy" data-sop-flow-tab="yy" onclick="sopSwitchFlowTab('yy')">运营</button>
-        <button class="sop-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="sop-flow-panel-cp" data-sop-flow-tab="cp" onclick="sopSwitchFlowTab('cp')">产品</button>
+        <button class="sop-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="sop-flow-panel-workflow" data-sop-flow-tab="yy" onclick="sopSwitchFlowTab('yy')">运营</button>
+        <button class="sop-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="sop-flow-panel-workflow" data-sop-flow-tab="cp" onclick="sopSwitchFlowTab('cp')">产品</button>
       </div>
 
       <!-- 存续（现有内容保留在此 Tab 下） -->
-      <div class="sop-tab-panel active" id="sop-flow-panel-cxy" role="tabpanel" data-sop-flow-panel="cxy">
+      <div class="sop-tab-panel active" id="sop-flow-panel-workflow" role="tabpanel" data-sop-flow-panel="workflow">
         <!-- SOP 流程图 -->
         <div class="sop-who-legend">
-          <span class="sop-who-chip sop-wc-biz">业务（Owner：吴靖、李菁）</span>
+          <span class="sop-who-chip sop-wc-biz" id="sop-biz-owner-label">业务（Owner：吴靖、李菁）</span>
           <div class="sop-who-divider"></div>
           <span class="sop-who-chip sop-wc-tec">科技</span>
         </div>
@@ -1588,12 +1600,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <span class="v">回答问题: 我投了多少钱？现在值多少？上季度分了多少？</span>
 <span class="v">调用时机: 用户询问自己的持仓总览/认缴/分配记录时</span>
 
-<span class="k">## 二、数据集 &amp; 字段定义 &amp; 数据来源 &amp; 数据权限</span>
-<span class="v">产品ID       | 产品统一编码，全系统唯一主键  | iPMS</span>
-<span class="v">产品名称     | 面向客户展示的产品全称        | iPMS</span>
-<span class="v">计价币种     | CNY/USD/EUR               | iGIMS</span>
-<span class="v">预计到期日   | 封闭式到期日；开放式为null    | iGIMS</span>
-<span class="req">是否已确认   | true=已公告；false=预计变更  | iGOWIN | 内部</span>
+<span class="k">## 二、数据权限说明（两张表）</span>
+<span class="k">### 2.1 产品信息查询表</span>
+<span class="v">权限说明：对<strong>持仓客户</strong>、<strong>理财师</strong>可见。</span>
+<span class="v">字段 | 业务口径 | 来源系统</span>
+<span class="v">product_id     | 产品统一编码，全系统唯一主键           | iPMS</span>
+<span class="v">product_name   | 面向客户展示的产品全称                 | iPMS</span>
+<span class="v">nav            | 当前净值（以公告口径为准）             | iGIMS</span>
+<span class="v">fee_rate       | 费率/管理费口径（以合同或公告为准）    | iPMS</span>
+<span class="v">as_of_date     | 净值/业绩的口径日期                     | iGIMS</span>
+
+<span class="k">### 2.2 持仓查询表</span>
+<span class="v">字段 | 业务口径 | 来源系统 | 权限级别 | 脱敏/处理规则</span>
+<span class="v">client_id         | 客户唯一标识（系统内部主键）                 | CRM     | 内部       | 不对客户披露</span>
+<span class="v">total_commitment  | 认缴额汇总                                   | TA      | 仅本人可见 | -</span>
+<span class="v">total_nav         | 当前市值汇总（按最新可用净值计算）           | TA/iGIMS| 仅本人可见 | -</span>
+<span class="v">total_distributed | 历史分配汇总                                 | iGOWIN  | 仅本人可见 | -</span>
+<span class="req">bank_account_last4| 银行卡后四位（如用于对账提示）               | TA      | 仅本人可见 | 仅保留后4位，其余掩码</span>
+<span class="req">id_no             | 证件号（极敏感，默认不返回）                 | CRM     | 强拦截     | 直接截断/不返回</span>
 
 <span class="k">## 三、数据缺口</span>
 <span class="req">cashflow_detail: iGOWIN暂无开放API</span>
@@ -1860,24 +1884,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           <div class="k">Marketing</div>
           <div class="t">营销 · 需求到上线全流程</div>
           <div class="d">此处预留营销相关流程图。后续你提供营销流程节点/交付物口径，我会按「存续」的同款样式落地成可展开卡片与交付物弹窗。</div>
-        </div>
-      </div>
-
-      <!-- 运营 -->
-      <div class="sop-tab-panel" id="sop-flow-panel-yy" role="tabpanel" data-sop-flow-panel="yy">
-        <div class="sop-tab-placeholder">
-          <div class="k">Operations</div>
-          <div class="t">运营 · 需求到上线全流程</div>
-          <div class="d">此处预留运营相关流程图。你给我运营侧的阶段定义/职责/交付物清单后，我会填充成同样的中轴流程。</div>
-        </div>
-      </div>
-
-      <!-- 产品 -->
-      <div class="sop-tab-panel" id="sop-flow-panel-cp" role="tabpanel" data-sop-flow-panel="cp">
-        <div class="sop-tab-placeholder">
-          <div class="k">Product</div>
-          <div class="t">产品 · 需求到上线全流程</div>
-          <div class="d">此处预留产品相关流程图。后续可在这里落产品需求评审/PRD/验收/迭代节奏等流程节点。</div>
         </div>
       </div>
 
