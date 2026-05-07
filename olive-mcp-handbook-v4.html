@@ -1880,11 +1880,324 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
       <!-- 营销 -->
       <div class="sop-tab-panel" id="sop-flow-panel-yx" role="tabpanel" data-sop-flow-panel="yx">
-        <div class="sop-tab-placeholder">
-          <div class="k">Marketing</div>
-          <div class="t">营销 · 需求到上线全流程</div>
-          <div class="d">此处预留营销相关流程图。后续你提供营销流程节点/交付物口径，我会按「存续」的同款样式落地成可展开卡片与交付物弹窗。</div>
+        <div class="sop-who-legend">
+          <span class="sop-who-chip sop-wc-biz" id="sop-biz-owner-label-yx">业务（Owner：魏鹏、刘绎凡）</span>
+          <div class="sop-who-divider"></div>
+          <span class="sop-who-chip sop-wc-tec">科技</span>
         </div>
+
+        <div class="sop-flow">
+          <div class="sop-axis-line"></div>
+          <!-- Step05 → Step01 loopback -->
+          <svg class="sop-flow-loopback" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <marker id="sop-loopArrow-yx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(168,164,154,.55)"></path>
+              </marker>
+            </defs>
+            <path d="M 1 94 L 0.3 94 L 0.3 4 C 1 2.3, 4 0.3, 8 0.3 L 46 0.3 C 49 0.3, 50 1, 50 5.8 L 50 7"
+                  fill="none" stroke="rgba(168,164,154,.55)" stroke-width="0.3"
+                  stroke-dasharray="1 1" stroke-linecap="round" stroke-linejoin="round"
+                  marker-end="url(#sop-loopArrow-yx)"></path>
+          </svg>
+
+        <!-- ══ STEP 01 · 业务 LEFT ══ -->
+        <div class="sop-flow-row">
+          <div class="sop-card-left">
+            <div class="sop-stage-tag biz">场景定义</div>
+            <div class="sop-step-card" id="sop-yx-s1">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s1')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-desc">从营销工作流出发，识别 MCP 需覆盖场景、明确服务对象、优先级、问题集</div>
+                </div>
+                <span class="sop-step-chevron">▶</span>
+              </div>
+              <div class="sop-card-body">
+                <ul class="sop-tasklist">
+                  <li class="sop-biz-dot">识别营销工作流中高频、重复、可结构化的查询场景</li>
+                  <li class="sop-biz-dot">明确每个场景的服务对象（RM / 营销团队 / 渠道 / 管理层）</li>
+                  <li class="sop-biz-dot">按 P0 / P1 / P2 排定优先级，P0 为首批上线必须覆盖</li>
+                  <li class="sop-biz-dot">为每个场景列出 3–5 个典型用户问题，作为后续测试用例</li>
+                  <li class="sop-biz-dot">管理层场景：营销过程跟踪与结果管理（转化率、跟进时效、团队对比）</li>
+                </ul>
+                <div class="sop-committee-deliv" style="margin-top:14px;">
+                  <div class="lbl">交付物</div>
+                  <div class="txt">场景定义说明</div>
+                </div>
+              </div>
+              <div class="sop-deliv-anchor">
+                <button class="sop-deliv-btn pulse" id="sop-yx-db1-btn" aria-label="查看交付件样例" onclick="sopTogglePop('sop-yx-pop1','sop-yx-db1-btn',event)">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="4.5" x2="7.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="6.5" x2="9.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                </button>
+                <div class="sop-deliv-pop" id="sop-yx-pop1">
+                  <div class="sop-pop-title">交付件 · 场景说明样例</div>
+                  <div class="sop-tmpl"><pre><span class="cm"># MCP 场景说明书</span>
+<span class="k">scene_id:</span>    <span class="req">SC-MKT-001</span>
+<span class="k">scene_name:</span>  <span class="req">营销活动效果查询</span>
+<span class="k">priority:</span>    <span class="req">P0</span>
+<span class="k">owner:</span>       <span class="req">魏鹏 / 刘绎凡</span>
+
+<span class="k">## 服务对象</span>
+<span class="v">user_role:   RM / 营销团队 / 管理层</span>
+
+<span class="k">## 典型问题（= 测试用例）</span>
+<span class="req">Q1: 上个月的路演活动转化了多少客户？</span>
+<span class="req">Q2: 哪些渠道带来的客户质量最高？</span>
+<span class="req">Q3: 当前在跟进的潜在客户有哪些？</span>
+<span class="req">Q4: 本月各团队的营销转化率如何？</span>
+<span class="req">Q5: 哪些客户跟进超过30天未转化？</span>
+
+<span class="k">## 所需数据</span>
+<span class="opt">- 营销活动记录与参与客户列表</span>
+<span class="opt">- 渠道来源与转化漏斗数据</span>
+<span class="opt">- 潜在客户跟进状态</span>
+
+<span class="k">## 权限定义</span>
+<span class="req">pii_cutoff:     客户身份证号、手机号（直接截断）</span>
+<span class="v">internal_only:  客户ID映射关系、内部评分</span>
+<span class="v">team_visible:   活动转化数据、渠道统计</span></pre></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sop-axis-node">
+            <div class="sop-node-dot" style="border-color:var(--gold);color:var(--sop-gold-p);">1</div>
+          </div>
+          <div></div>
+        </div>
+        <div class="sop-spacer"></div>
+
+        <!-- ══ STEP 02 · 业务 LEFT ══ -->
+        <div class="sop-flow-row">
+          <div class="sop-card-left">
+            <div class="sop-stage-tag biz">工具设计</div>
+            <div class="sop-step-card" id="sop-yx-s2">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s2')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-desc">工具拆解与调用说明、数据集构建、字段定义、数据权限、数据缺口</div>
+                </div>
+                <span class="sop-step-chevron">▶</span>
+              </div>
+              <div class="sop-card-body">
+                <ul class="sop-tasklist">
+                  <li class="sop-biz-dot">将场景拆解为具体工具，定义每个工具的调用时机与边界</li>
+                  <li class="sop-biz-dot">逐字段定义业务口径、来源系统、更新频率</li>
+                  <li class="sop-biz-dot">标注每个字段的权限级别（团队可见 / 内部 / PII 截断）</li>
+                  <li class="sop-biz-dot">识别数据缺口，明确过渡方案与预计解决时间</li>
+                </ul>
+                <div class="sop-committee-deliv" style="margin-top:14px;">
+                  <div class="lbl">交付物</div>
+                  <div class="txt">工具/数据集设计说明</div>
+                </div>
+              </div>
+              <div class="sop-deliv-anchor">
+                <button class="sop-deliv-btn pulse" id="sop-yx-db2-btn" aria-label="查看交付件样例" onclick="sopTogglePop('sop-yx-pop2','sop-yx-db2-btn',event)">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="4.5" x2="7.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="6.5" x2="9.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                </button>
+                <div class="sop-deliv-pop" id="sop-yx-pop2">
+                  <div class="sop-pop-title">交付件 · 工具设计说明样例</div>
+                  <div class="sop-tmpl"><pre><span class="cm"># 工具设计说明书 · SC-MKT-001 · 营销活动效果查询</span>
+
+<span class="k">## 一、工具拆解与调用说明</span>
+<span class="v">工具名: 营销活动查询</span>
+<span class="v">回答问题: 活动参与人数、转化率、渠道效果如何？</span>
+<span class="v">调用时机: 用户询问活动效果/转化数据时</span>
+<span class="v">不调用时: 询问客户持仓 → get_client_holdings</span>
+
+<span class="v">工具名: 客户画像分析</span>
+<span class="v">回答问题: 这批客户的画像特征是什么？偏好哪类产品？</span>
+<span class="v">调用时机: 用户询问客户群体特征/偏好分析时</span>
+
+<span class="k">## 二、数据权限说明</span>
+<span class="k">### 2.1 营销活动表</span>
+<span class="v">权限说明：对<strong>营销团队</strong>、<strong>RM</strong>可见。</span>
+<span class="v">字段 | 业务口径 | 来源系统</span>
+<span class="v">campaign_id    | 活动唯一编码                           | CRM</span>
+<span class="v">campaign_name  | 活动名称                               | CRM</span>
+<span class="v">channel        | 获客渠道                               | CRM</span>
+<span class="v">conversion     | 转化客户数                             | CRM</span>
+<span class="v">event_date     | 活动日期                               | CRM</span>
+
+<span class="k">### 2.2 客户画像表</span>
+<span class="v">字段 | 业务口径 | 来源系统 | 权限级别 | 脱敏/处理规则</span>
+<span class="v">client_id         | 客户唯一标识                                 | CRM     | 内部       | 不对外披露</span>
+<span class="v">risk_preference   | 风险偏好等级                                 | CRM     | 团队可见   | -</span>
+<span class="v">aum_range         | 资产规模区间                                 | TA      | 团队可见   | -</span>
+<span class="v">product_interest  | 产品偏好标签                                 | CRM     | 团队可见   | -</span>
+<span class="req">mobile            | 手机号（极敏感）                             | CRM     | 强拦截     | 直接截断/不返回</span>
+<span class="req">id_no             | 证件号（极敏感）                             | CRM     | 强拦截     | 直接截断/不返回</span>
+
+<span class="k">## 三、数据缺口</span>
+<span class="req">channel_attribution: 渠道归因模型尚未完善</span>
+<span class="req">  方案: 人工标注过渡 | 预计解决: 2026 Q3</span></pre></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sop-axis-node">
+            <div class="sop-node-dot" style="border-color:var(--gold);color:var(--sop-gold-p);">2</div>
+          </div>
+          <div></div>
+        </div>
+        <div class="sop-spacer"></div>
+
+        <!-- ══ 委员会评审 · 独立节点（虚框） ══ -->
+        <div class="sop-flow-row">
+          <div></div>
+          <div class="sop-axis-node">
+            <div class="sop-node-dot" style="border-color:#BEB8AD;color:#BEB8AD;border-style:dashed;">&nbsp;</div>
+          </div>
+          <div class="sop-card-right">
+            <div class="sop-step-card committee" id="sop-yx-committee-review">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-committee-review')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-title">委员会评审</div>
+                  <div class="sop-step-desc">对场景定义表进行优先级评估、技术可行性判断和初步合规风险识别，出具立项决议。</div>
+                </div>
+                <span class="sop-step-chevron">▶</span>
+              </div>
+              <div class="sop-card-body">
+                <div class="sop-sec-lbl">✅ 评估内容</div>
+                <ul class="sop-tasklist">
+                  <li class="sop-biz-dot">优先级排序与 MVP 范围确认</li>
+                  <li class="sop-biz-dot">技术可行性判断（涉及数据是否可接入）</li>
+                  <li class="sop-biz-dot">合规风险预判（数据等级 / 披露限制）</li>
+                </ul>
+                <div class="sop-committee-deliv">
+                  <div class="lbl">交付物</div>
+                  <div class="txt">立项决议（P0/P1/P2 排期）或退回意见</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sop-spacer"></div>
+
+        <!-- ══ STEP 03 · 科技 RIGHT ══ -->
+        <div class="sop-flow-row">
+          <div></div>
+          <div class="sop-axis-node">
+            <div class="sop-node-dot" style="border-color:var(--sop-blue);color:var(--sop-blue);">3</div>
+          </div>
+          <div class="sop-card-right">
+            <div class="sop-stage-tag tec">技术实现</div>
+            <div class="sop-step-card" id="sop-yx-s3">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s3')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-desc">根据工具设计说明书搭建 MCP 工具，编写 Tool Description</div>
+                </div>
+                <span class="sop-step-chevron">▶</span>
+              </div>
+              <div class="sop-card-body">
+                <ul class="sop-tasklist">
+                  <li class="sop-tec-dot">中台数据模型搭建 · ETL 管道开发</li>
+                  <li class="sop-tec-dot">MCP 工具实现 · 权限控制层</li>
+                  <li class="sop-tec-dot">基于数据集定义的开发自测</li>
+                </ul>
+                <div class="sop-committee-deliv" style="margin-top:14px;">
+                  <div class="lbl">交付物</div>
+                  <div class="txt">可用的 MCP 工具 + 自测报告</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sop-spacer"></div>
+
+        <!-- ══ STEP 04 · UAT — 业务 LEFT + 科技 RIGHT ══ -->
+        <div class="sop-flow-row" id="sop-yx-step4-row">
+          <div class="sop-card-left">
+            <div class="sop-stage-tag teal">上线前验证</div>
+            <div class="sop-step-card" id="sop-yx-s4a">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s4a')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-title" style="font-size:13px;">业务验证</div>
+                  <div class="sop-step-desc">定义的场景下，终端用户拿到的最终结果是否符合业务预期</div>
+                </div>
+                <span class="sop-step-chevron">▶</span>
+              </div>
+              <div class="sop-card-body">
+                <ul class="sop-tasklist">
+                  <li class="sop-biz-dot"><strong>营销活动场景</strong>——用真实活动ID调工具，AI 生成的活动效果分析是否准确</li>
+                  <li class="sop-biz-dot"><strong>客户画像场景</strong>——用真实客户群体，验证画像标签/偏好分析是否符合预期</li>
+                  <li class="sop-biz-dot"><strong>合规场景</strong>——客户敏感信息是否正确脱敏；权限控制是否生效</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="sop-axis-node">
+            <div class="sop-node-dot" style="border-color:var(--sop-teal);color:var(--sop-teal);">4</div>
+          </div>
+          <div class="sop-card-right">
+            <div class="sop-stage-tag teal">上线前验证</div>
+            <div class="sop-step-card" id="sop-yx-s4b">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s4b')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-title" style="font-size:13px;">接口验证</div>
+                  <div class="sop-step-desc">MCP 传递的数据本身是否正确——独立于业务场景判断</div>
+                </div>
+                <span class="sop-step-chevron">▶</span>
+              </div>
+              <div class="sop-card-body">
+                <ul class="sop-tasklist">
+                  <li class="sop-tec-dot">各字段返回值与来源系统（CRM / TA）数据一致，无截断、无丢失</li>
+                  <li class="sop-tec-dot">数字单位、精度、口径与字段说明书一致</li>
+                  <li class="sop-tec-dot">权限控制正确：按角色自动应用，越权请求返回 403</li>
+                  <li class="sop-tec-dot">错误码 / 降级逻辑正常（字段为空时返回 null 而非报错）</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sop-spacer"></div>
+
+        <!-- ══ STEP 05 · 上线 & 持续运营（业务 LEFT + 科技 RIGHT） ══ -->
+        <div class="sop-flow-row" id="sop-yx-step5-row">
+          <div class="sop-card-left">
+            <div class="sop-stage-tag grn">上线后持续运作</div>
+            <div class="sop-step-card" id="sop-yx-s5a">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s5a')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-desc">上线后业务持续使用并关注反馈：沉淀新场景，推动持续优化与复盘闭环</div>
+                </div>
+                <span class="sop-step-chevron">&#9654;</span>
+              </div>
+              <div class="sop-card-body">
+                <div class="sop-sec-lbl">&#10004; 业务的日常运营职责</div>
+                <ul class="sop-tasklist">
+                  <li class="sop-biz-dot"><strong>变更发起</strong>——任何字段变更 / 新增场景，必须由业务书面提需求，不得口头告知科技修改</li>
+                  <li class="sop-biz-dot"><strong>Bad Case 收集</strong>——日常发现 AI 回答有误，记录并提交复盘（每月至少一次正式复盘）</li>
+                  <li class="sop-biz-dot"><strong>新场景推进</strong>——持续补充场景定义表，将 P1/P2 场景逐步纳入开发排期</li>
+                  <li class="sop-biz-dot"><strong>紧急情况响应</strong>——AI 生成内容出现实质性错误，立即停止使用并通知科技</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="sop-axis-node">
+            <div class="sop-node-dot" style="border-color:var(--sop-green);color:var(--sop-green);">5</div>
+          </div>
+          <div class="sop-card-right">
+            <div class="sop-stage-tag grn">上线 &amp; 持续监控</div>
+            <div class="sop-step-card" id="sop-yx-s5b">
+              <div class="sop-step-head" onclick="sopToggleCard('sop-yx-s5b')">
+                <div class="sop-step-head-inner">
+                  <div class="sop-step-desc">运行保障：监控、告警、权限审计、故障响应与发布支持</div>
+                </div>
+                <span class="sop-step-chevron">&#9654;</span>
+              </div>
+              <div class="sop-card-body">
+                <ul class="sop-tasklist">
+                  <li class="sop-tec-dot"><strong>监控与告警</strong>——工具可用性、延迟、错误率、关键依赖健康度</li>
+                  <li class="sop-tec-dot"><strong>权限审计</strong>——权限规则变更留痕；定期抽查脱敏规则是否符合审批</li>
+                  <li class="sop-tec-dot"><strong>故障响应</strong>——异常快速定位、临时降级/熔断、回滚与复盘</li>
+                  <li class="sop-tec-dot"><strong>发布与变更支持</strong>——按变更流程执行灰度/窗口期上线，确保回归与验收闭环</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div><!-- end sop-flow -->
       </div>
 
     </div><!-- end flow-phases -->
