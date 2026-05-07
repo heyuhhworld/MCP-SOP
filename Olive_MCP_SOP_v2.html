@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olive MCP SOP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+  --ink:    #0E0E0E;
+  --paper:  #F6F4EE;
+  --card:   #FFFFFF;
+  --rule:   #E0DDD5;
+  --ghost:  #A8A49A;
+  --mid:    #4A4744;
+  --gold:   #B8820A;
+  --gold-l: #FDF5E0;
+  --gold-p: #7A5500;
+  --blue:   #1B4F8A;
+  --blue-l: #E3EDF6;
+  --teal:   #0D6B5A;
+  --teal-l: #E0F2EE;
+  --red:    #B53020;
+  --red-l:  #FDECEA;
+  --green:  #2D6010;
+  --green-l:#EBF3DD;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans SC',sans-serif; background:var(--paper); color:var(--ink); }
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--ink);
+  padding: 40px 48px 36px;
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 40px;
+}
+.hdr-eye {
+  font-family:'DM Mono',monospace;
+  font-size:10px; letter-spacing:.24em;
+  color:#555; text-transform:uppercase; margin-bottom:12px;
+}
+.hdr h1 {
+  font-family:'Instrument Serif',serif;
+  font-size:30px; font-weight:400; color:#fff; line-height:1.2;
+}
+.hdr h1 em { color:#C9A84C; font-style:italic; }
+.hdr-sub { font-size:12px; color:#666; margin-top:8px; line-height:1.6; }
+.hdr-right { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; align-items:flex-end; }
+.hdr-chip {
+  font-family:'DM Mono',monospace;
+  font-size:10px; padding:4px 11px; border-radius:2px;
+  border:1px solid rgba(255,255,255,.1); color:#777;
+  letter-spacing:.06em; white-space:nowrap;
+}
+
+/* ── MAIN ── */
+.main { max-width:960px; margin:0 auto; padding:56px 40px 80px; }
+
+/* ── WHO LEGEND ── */
+.who-legend {
+  display:flex; gap:10px; align-items:center;
+  justify-content:center; margin-bottom:48px; flex-wrap:wrap;
+}
+.who-chip {
+  font-family:'Noto Sans SC',sans-serif; font-size:15px; font-weight:700;
+  letter-spacing:.04em; padding:6px 20px; border-radius:6px;
+}
+.wc-biz  { background:var(--gold-l); color:var(--gold-p); }
+.wc-tec  { background:var(--blue-l); color:var(--blue); }
+.wc-both { background:var(--green-l); color:var(--green); }
+.who-desc { font-size:12px; color:var(--ghost); }
+.who-divider {
+  width:1px; height:28px; background:var(--rule); margin:0 16px;
+}
+
+/* ══ CENTRAL AXIS LAYOUT ══ */
+.flow { position:relative; }
+
+.axis-line {
+  position:absolute; left:50%; transform:translateX(-50%);
+  top:0; bottom:0; width:2px;
+  background: linear-gradient(
+    to bottom,
+    var(--gold) 0%, var(--gold) 20%,
+    var(--blue) 40%, var(--blue) 60%,
+    var(--teal) 75%, var(--green) 100%
+  );
+  border-radius:2px; z-index:0;
+}
+
+/* 3-col grid: left-card | axis(64px) | right-card */
+.flow-row {
+  position:relative;
+  display:grid;
+  grid-template-columns: 1fr 64px 1fr;
+  align-items:start;
+  z-index:1;
+  margin-bottom:0;
+}
+
+.axis-node {
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:20px; position:relative; z-index:2;
+}
+.node-dot {
+  width:22px; height:22px; border-radius:50%; border:2px solid;
+  background:var(--paper);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+  z-index:2; flex-shrink:0;
+}
+
+/* Stage name tag — above the card, axis-aligned */
+.stage-tag {
+  display:inline-block;
+  font-family:'Noto Sans SC', sans-serif;
+  font-size:13px; font-weight:700;
+  color:var(--ink);
+  background:var(--card);
+  border:1.5px solid var(--rule);
+  border-radius:6px;
+  padding:3px 12px 4px;
+  margin-bottom:6px;
+  letter-spacing:.02em;
+  line-height:1.4;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.stage-tag.biz { border-color:var(--gold); color:var(--gold-p); background:var(--gold-l); }
+.stage-tag.tec { border-color:var(--blue); color:var(--blue);   background:var(--blue-l); }
+.stage-tag.teal{ border-color:var(--teal); color:var(--teal);   background:var(--teal-l); }
+.stage-tag.grn { border-color:var(--green);color:var(--green);  background:var(--green-l); }
+
+/* Left cards: tag right-aligned (close to axis) */
+.card-left  { text-align:right; }
+.card-left .step-card { text-align:left; }
+/* Right cards: tag left-aligned (close to axis) */
+.card-right { text-align:left; }
+
+/* card columns */
+.card-left, .card-right {
+  padding:12px 16px 16px;
+}
+
+/* Step card */
+.step-card {
+  width:100%; background:var(--card);
+  border:0.5px solid var(--rule); border-radius:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:visible;
+  text-align:left; position:relative;
+  transition:box-shadow .15s, border-color .15s;
+}
+.step-card:hover { box-shadow:0 2px 8px rgba(0,0,0,.07); }
+
+/* Committee review: independent, dashed node */
+.step-card.committee {
+  border:1.5px dashed #BEB8AD;
+  background: #FFF;
+}
+.committee-title {
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+  line-height:1.35;
+  margin-bottom:6px;
+}
+.committee-meta {
+  font-size:12px;
+  color:var(--mid);
+  line-height:1.55;
+}
+.committee-deliv {
+  margin-top:12px;
+  padding:10px 12px;
+  background: #F7F2E6;
+  border:0.5px solid #E7DCC4;
+  border-radius:8px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.committee-deliv .lbl {
+  flex-shrink:0;
+  font-size:11px;
+  font-weight:700;
+  color:#8A6A1A;
+  background:#F3E6C8;
+  border-radius:999px;
+  padding:3px 10px;
+}
+.committee-deliv .txt {
+  font-size:12px;
+  color:#5B4B26;
+  line-height:1.55;
+}
+
+.step-head {
+  padding:14px 18px 14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; user-select:none;
+}
+.step-head-inner { flex:1; }
+.step-chevron {
+  font-size:9px; color:var(--ghost);
+  transition:transform .2s; flex-shrink:0;
+}
+.step-card.open .step-chevron { transform:rotate(90deg); }
+.step-who {
+  font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase;
+  padding:2px 9px; border-radius:3px; flex-shrink:0; margin-top:2px;
+}
+.w-biz  { background:var(--gold-l); color:var(--gold-p); }
+.w-tec  { background:var(--blue-l); color:var(--blue); }
+.w-both { background:var(--green-l); color:var(--green); }
+
+.step-num {
+  font-family:'DM Mono',monospace; font-size:9px;
+  color:var(--ghost); letter-spacing:.1em; margin-bottom:4px;
+}
+.step-title { font-size:14px; font-weight:500; color:var(--ink); line-height:1.35; margin-bottom:5px; }
+.step-desc  { font-size:12px; color:var(--mid); line-height:1.5; }
+
+/* card body — collapsed by default, differentiated bg */
+.card-body {
+  padding:0 18px 16px;
+  border-top:0.5px solid var(--rule);
+  background:#F9F8F4;
+  border-radius:0 0 10px 10px;
+  display:none;
+}
+.step-card.open .card-body { display:block; }
+.tasklist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.tasklist li { font-size:12px; color:var(--mid); line-height:1.55; padding-left:14px; position:relative; }
+.biz-dot::before {
+  content:''; position:absolute; left:0; top:7px;
+  width:5px; height:5px; border-radius:50%; background:var(--gold);
+}
+.tec-dot::before {
+  content:''; position:absolute; left:0; top:7px;
+  width:5px; height:5px; border-radius:50%; background:var(--blue);
+}
+.sec-lbl {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ghost);
+  margin-bottom:8px; padding-bottom:5px; border-bottom:0.5px solid var(--rule);
+}
+
+/* ── DELIVERABLE ICON BUTTON (attached to card edge near axis) ── */
+/* Wrapper sits at bottom-center of the card, on the axis side */
+.deliv-anchor {
+  position:absolute;
+  bottom:-14px;   /* hangs below card */
+  z-index:10;
+}
+/* For left cards: anchor on right edge */
+.card-left .deliv-anchor  { right:-14px; bottom:auto; top:50%; transform:translateY(-50%); }
+/* For right cards: anchor on left edge */
+.card-right .deliv-anchor { left:-14px;  bottom:auto; top:50%; transform:translateY(-50%); }
+
+.deliv-btn {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--card); border:1.5px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--gold);
+  box-shadow:0 2px 8px rgba(0,0,0,.10);
+  transition:background .15s, color .15s, box-shadow .15s;
+  padding:0; flex-shrink:0;
+}
+.deliv-btn.sm {
+  width:24px; height:24px;
+}
+.deliv-btn:hover, .deliv-btn.active {
+  background:var(--gold); color:#fff;
+  box-shadow:0 3px 12px rgba(184,130,10,.30);
+}
+
+/* Make the icon feel clickable: subtle heartbeat (only for Step 01/02) */
+@keyframes deliv-heartbeat {
+  0%, 55%, 100% { transform:scale(1); }
+  60% { transform:scale(1.06); }
+  72% { transform:scale(1.02); }
+}
+@keyframes deliv-ring {
+  0%   { box-shadow:0 2px 8px rgba(0,0,0,.10), 0 0 0 0 rgba(184,130,10,.0); }
+  60%  { box-shadow:0 3px 12px rgba(0,0,0,.12), 0 0 0 7px rgba(184,130,10,.14); }
+  100% { box-shadow:0 2px 8px rgba(0,0,0,.10), 0 0 0 12px rgba(184,130,10,.0); }
+}
+.deliv-btn.pulse {
+  animation: deliv-heartbeat 2.4s ease-in-out infinite,
+             deliv-ring 2.4s ease-in-out infinite;
+}
+.deliv-btn.pulse:hover,
+.deliv-btn.pulse.active {
+  animation:none; /* avoid fighting hover */
+}
+.deliv-btn:focus-visible {
+  outline:3px solid rgba(27,79,138,.25);
+  outline-offset:3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .deliv-btn.pulse { animation:none; }
+}
+
+/* Axis tool cluster (Step 05 change flow icons) */
+.axis-tools {
+  margin-top:12px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+/* Step05 → Step01 loopback */
+.flow-loopback {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:5;
+  pointer-events:none;
+}
+
+/* Popover panel */
+.deliv-pop {
+  display:none;
+  position:absolute;
+  z-index:200;
+  width:420px;
+  background:var(--card);
+  border:1px solid var(--gold);
+  border-radius:10px;
+  box-shadow:0 10px 32px rgba(0,0,0,.14);
+  padding:16px 18px 18px;
+}
+.deliv-pop.open { display:block; }
+
+/* Position: left-card popovers open to the RIGHT of the icon */
+.card-left .deliv-pop  { left:36px; top:50%; transform:translateY(-50%); }
+/* Position: right-card popovers open to the LEFT of the icon */
+.card-right .deliv-pop { right:36px; top:50%; transform:translateY(-50%); }
+
+.pop-title {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--gold);
+  margin-bottom:10px; padding-bottom:7px; border-bottom:0.5px solid var(--rule);
+}
+.tmpl {
+  background:#FAFAF7; border:0.5px solid var(--rule);
+  border-left:3px solid var(--gold); border-radius:0 7px 7px 0; padding:12px 14px;
+}
+.tmpl pre {
+  font-family:'DM Mono',monospace; font-size:11px; line-height:1.75;
+  color:var(--mid); white-space:pre-wrap; word-break:break-word;
+}
+.tmpl pre .cm  { color:var(--ghost); }
+.tmpl pre .k   { color:var(--blue); font-weight:500; }
+.tmpl pre .v   { color:var(--teal); }
+.tmpl pre .req { color:var(--red); }
+.tmpl pre .opt { color:var(--ghost); }
+
+/* spacers */
+.spacer      { height:24px; position:relative; z-index:1; }
+.spacer-sm   { height:12px; position:relative; z-index:1; }
+
+/* ── footer ── */
+.footer {
+  text-align:center; font-family:'DM Mono',monospace;
+  font-size:10px; letter-spacing:.2em; color:var(--ghost);
+  padding:28px; border-top:0.5px solid var(--rule);
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-eye">Olive Asset Management · MCP SOP · v1.0</div>
+    <h1>MCP 搭建 <em>SOP</em></h1>
+    <div class="hdr-sub">从需求到上线，每阶段做什么一目了然 · 点击卡片旁图标查看交付物样例</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="who-legend">
+    <span class="who-chip wc-biz">业务</span>
+    <div class="who-divider"></div>
+    <span class="who-chip wc-tec">科技</span>
+  </div>
+
+  <div class="flow">
+    <div class="axis-line"></div>
+    <!-- Step05 → Step01 (新增场景需走完整流程) -->
+    <svg class="flow-loopback" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <marker id="loopArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(168,164,154,.55)"></path>
+        </marker>
+      </defs>
+      <path d="M 1 94
+               L 0.3 94
+               L 0.3 4
+               C 1 2.3, 4 0.3, 8 0.3
+               L 46 0.3
+               C 49 0.3, 50 1, 50 5.8
+               L 50 7"
+            fill="none"
+            stroke="rgba(168,164,154,.55)"
+            stroke-width="0.3"
+            stroke-dasharray="1 1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            marker-end="url(#loopArrow)"></path>
+    </svg>
+
+    <!-- ══ STEP 01 · 业务 LEFT ══ -->
+    <div class="flow-row">
+      <div class="card-left">
+        <div class="stage-tag biz">场景定义</div>
+        <div class="step-card" id="s1">
+          <div class="step-head" onclick="toggleCard('s1')">
+            <div class="step-head-inner">
+              <div class="step-desc">从一线工作流出发，识别 MCP 需覆盖场景、明确服务对象、优先级、问题集</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <ul class="tasklist">
+              <li class="biz-dot">识别一线工作流中高频、重复、可结构化的查询场景</li>
+              <li class="biz-dot">明确每个场景的服务对象（客户 / IR / RM / 投资团队）</li>
+              <li class="biz-dot">按 P0 / P1 / P2 排定优先级，P0 为首批上线必须覆盖</li>
+              <li class="biz-dot">为每个场景列出 3–5 个典型用户问题，作为后续测试用例</li>
+            </ul>
+            <div class="committee-deliv" style="margin-top:14px;">
+              <div class="lbl">交付物</div>
+              <div class="txt">场景定义说明</div>
+            </div>
+          </div>
+          <!-- deliverable icon anchored to right (axis) side -->
+          <div class="deliv-anchor">
+            <button class="deliv-btn pulse" id="db1-btn" aria-label="查看交付件样例" onclick="togglePop('pop1', 'db1-btn', event)">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="4.5" x2="7.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="6.5" x2="9.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="deliv-pop" id="pop1">
+              <div class="pop-title">交付件 · 场景说明样例</div>
+              <div class="tmpl"><pre><span class="cm"># MCP 场景说明书</span>
+<span class="k">scene_id:</span>    <span class="req">SC-001</span>
+<span class="k">scene_name:</span>  <span class="req">客户持仓查询</span>
+<span class="k">priority:</span>    <span class="req">P0</span>
+<span class="k">owner:</span>       <span class="req">吴靖 / 李菁</span>
+
+<span class="k">## 服务对象</span>
+<span class="v">user_role:   客户</span>
+
+<span class="k">## 典型问题（= 测试用例）</span>
+<span class="req">Q1: 我一共投了多少钱？现在值多少？</span>
+<span class="req">Q2: 我的钱什么时候能拿回来？</span>
+<span class="req">Q3: 上季度给我分了多少钱？</span>
+
+<span class="k">## 所需数据</span>
+<span class="opt">- 客户在各产品的认缴额和已出资额</span>
+<span class="opt">- 各产品当前市值（NAV）</span>
+<span class="opt">- 历史分配记录</span>
+
+<span class="k">## 权限定义</span>
+<span class="req">pii_cutoff:     身份证号、银行卡号（直接截断）</span>
+<span class="v">internal_only:  客户ID映射关系</span>
+<span class="v">client_visible: NAV金额、分配记录</span></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="axis-node">
+        <div class="node-dot" style="border-color:var(--gold);color:var(--gold-p);">1</div>
+      </div>
+      <div></div><!-- empty right -->
+    </div>
+    <div class="spacer"></div>
+
+    <!-- ══ STEP 02 · 业务 LEFT ══ -->
+    <div class="flow-row">
+      <div class="card-left">
+        <div class="stage-tag biz">工具设计</div>
+        <div class="step-card" id="s2">
+          <div class="step-head" onclick="toggleCard('s2')">
+            <div class="step-head-inner">
+              <div class="step-desc">工具拆解与调用说明、数据集构建、字段定义、数据权限、数据缺口</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <ul class="tasklist">
+              <li class="biz-dot">将场景拆解为具体工具，定义每个工具的调用时机与边界</li>
+              <li class="biz-dot">逐字段定义业务口径、来源系统、更新频率</li>
+              <li class="biz-dot">标注每个字段的权限级别（客户可见 / 内部 / PII 截断）</li>
+              <li class="biz-dot">识别数据缺口，明确过渡方案与预计解决时间</li>
+            </ul>
+            <div class="committee-deliv" style="margin-top:14px;">
+              <div class="lbl">交付物</div>
+              <div class="txt">工具/数据集设计说明</div>
+            </div>
+          </div>
+          <div class="deliv-anchor">
+            <button class="deliv-btn pulse" id="db2-btn" aria-label="查看交付件样例" onclick="togglePop('pop2', 'db2-btn', event)">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="4.5" x2="7.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="6.5" x2="9.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="deliv-pop" id="pop2">
+              <div class="pop-title">交付件 · 工具设计说明样例</div>
+              <div class="tmpl"><pre><span class="cm"># 工具设计说明书 · SC-001 · 客户持仓查询</span>
+
+<span class="k">## 一、工具拆解与调用说明</span>
+<span class="v">工具名: 产品信息查询</span>
+<span class="v">回答问题: 产品基本信息、净值、业绩、费用、持仓标的是什么？</span>
+<span class="v">调用时机: 用户询问产品净值/业绩/费用/穿透敞口时</span>
+<span class="v">不调用时: 询问客户自己持仓金额 → get_client_holdings</span>
+
+<span class="v">工具名: 客户持仓查询</span>
+<span class="v">回答问题: 我投了多少钱？现在值多少？上季度分了多少？</span>
+<span class="v">调用时机: 用户询问自己的持仓总览/认缴/分配记录时</span>
+
+<span class="k">## 二、数据集 &amp; 字段定义 &amp; 数据来源 &amp; 数据权限</span>
+<span class="v">产品ID       | 产品统一编码，全系统唯一主键  | iPMS</span>
+<span class="v">产品名称     | 面向客户展示的产品全称        | iPMS</span>
+<span class="v">计价币种     | CNY/USD/EUR               | iGIMS</span>
+<span class="v">预计到期日   | 封闭式到期日；开放式为null    | iGIMS</span>
+<span class="req">是否已确认   | true=已公告；false=预计变更  | iGOWIN | 内部</span>
+
+<span class="k">## 三、数据缺口</span>
+<span class="req">cashflow_detail: iGOWIN暂无开放API</span>
+<span class="req">  方案: 人工导出过渡 | 预计解决: 2026 Q3</span></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="axis-node">
+        <div class="node-dot" style="border-color:var(--gold);color:var(--gold-p);">2</div>
+      </div>
+      <div></div><!-- empty right -->
+    </div>
+    <div class="spacer"></div>
+
+    <!-- ══ COMMITTEE REVIEW · 独立节点（虚框） ══ -->
+    <div class="flow-row">
+      <div></div><!-- empty left -->
+      <div class="axis-node">
+        <div class="node-dot" style="border-color:#BEB8AD;color:#BEB8AD;border-style:dashed;">&nbsp;</div>
+      </div>
+      <div class="card-right">
+        <div class="step-card committee" id="committee-review">
+          <div class="step-head" onclick="toggleCard('committee-review')">
+            <div class="step-head-inner">
+              <div class="step-title">委员会评审</div>
+              <div class="step-desc">对场景定义表进行优先级评估、技术可行性判断和初步合规风险识别，出具立项决议。</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <div class="sec-lbl">✅ 评估内容</div>
+            <ul class="tasklist">
+              <li class="biz-dot">优先级排序与 MVP 范围确认</li>
+              <li class="biz-dot">技术可行性判断（涉及数据是否可接入）</li>
+              <li class="biz-dot">合规风险预判（数据等级 / 披露限制）</li>
+            </ul>
+            <div class="committee-deliv">
+              <div class="lbl">交付物</div>
+              <div class="txt">立项决议（P0/P1/P2 排期）或退回意见</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+
+    <!-- ══ STEP 03 · 科技 RIGHT ══ -->
+    <div class="flow-row">
+      <div></div><!-- empty left -->
+      <div class="axis-node">
+        <div class="node-dot" style="border-color:var(--blue);color:var(--blue);">3</div>
+      </div>
+      <div class="card-right">
+        <div class="stage-tag tec">技术实现</div>
+        <div class="step-card" id="s3">
+          <div class="step-head" onclick="toggleCard('s3')">
+            <div class="step-head-inner">
+              <div class="step-desc">根据工具设计说明书搭建 MCP 工具，编写 Tool Description</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <ul class="tasklist">
+              <li class="tec-dot">中台数据模型搭建 · ETL 管道开发</li>
+              <li class="tec-dot">MCP 工具实现 · 权限控制层</li>
+              <li class="tec-dot">基于数据集定义的开发自测</li>
+             
+            </ul>
+            <div class="committee-deliv" style="margin-top:14px;">
+              <div class="lbl">交付物</div>
+              <div class="txt">可用的 MCP 工具 + 自测报告</div>
+            </div>
+          </div>
+          <div class="deliv-anchor">
+            <button class="deliv-btn" id="db3-btn" aria-label="查看交付件样例" onclick="togglePop('pop3', 'db3-btn', event)">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="4.5" x2="7.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="6.5" x2="9.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="deliv-pop" id="pop3">
+              <div class="pop-title">交付件 · 可用的 MCP 工具 + 自测报告</div>
+              <div class="tmpl"><pre><span class="cm"># Tool: get_client_holdings</span>
+<span class="cm">scene: SC-001 | version: v1.0</span>
+
+<span class="k">## 功能</span>
+<span class="v">查询客户在 Olive 所有产品的持仓汇总：</span>
+<span class="v">认缴额、已出资、当前市值、累计分配。</span>
+
+<span class="k">## 什么时候调用</span>
+<span class="v">用户问：我投了多少钱 / 现在值多少</span>
+
+<span class="k">## 什么时候不调用</span>
+<span class="v">询问产品业绩 → 用 get_product_fact</span>
+<span class="v">询问行业分布 → 用 get_exposure</span>
+
+<span class="k">## 输入</span>
+<span class="req">client_id: string（必填）</span>
+<span class="opt">as_of_date: date（选填，默认今日）</span>
+
+<span class="k">## 输出示例</span>
+<span class="v">{ "total_commitment": 10000000,</span>
+<span class="v">  "total_nav": 7200000,</span>
+<span class="v">  "total_distributed": 800000 }</span>
+
+<span class="k">## 权限</span>
+<span class="req">PII: 无</span>
+<span class="opt">批量: 最多50条持仓记录</span></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+
+    <!-- ══ STEP 04 · UAT — 业务 LEFT + 科技 RIGHT ══ -->
+    <div class="flow-row" id="step4-row">
+      <!-- LEFT: 业务 -->
+      <div class="card-left">
+        <div class="stage-tag teal">上线前验证</div>
+        <div class="step-card" id="s4a">
+          <div class="step-head" onclick="toggleCard('s4a')">
+            <div class="step-head-inner">
+              <div class="step-title" style="font-size:13px;">业务验证</div>
+              <div class="step-desc">定义的场景下，终端用户拿到的最终结果是否符合业务预期</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <ul class="tasklist">
+              <li class="biz-dot"><strong>投资场景</strong>——用真实产品id调工具，AI 生成的 IC 备忘录结论是否准确，与人工版本对比</li>
+              <li class="biz-dot"><strong>客户场景（IR / RM）</strong>——用真实 client_id，验证持仓汇总 / 流动性时间轴 / 收益归因的分析结论，是否回答了 P1 中定义的用户问题</li>
+              <li class="biz-dot"><strong>合规场景</strong>——穿透数据展示是否符合 disclosure_level 规则；非专业投资者 holding_name 是否正确匿名</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIS -->
+      <div class="axis-node">
+        <div class="node-dot" style="border-color:var(--teal);color:var(--teal);">4</div>
+        <!-- deliverable icon for UAT report -->
+        <div style="margin-top:12px;position:relative;">
+          <button class="deliv-btn" id="db4-btn" aria-label="查看交付件样例" onclick="togglePop('pop4', 'db4-btn', event)">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="4.5" x2="7.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="6.5" x2="9.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="deliv-pop" id="pop4" style="left:36px;top:50%;transform:translateY(-50%);">
+            <div class="pop-title">交付件 · 测试报告 + 上线签字</div>
+            <div class="tmpl"><pre><span class="cm"># 测试报告 · SC-001 · 2026-04-30</span>
+
+<span class="k">## 自动化测试</span>
+<span class="v">总用例: 3 | 通过: 2 | 失败: 1</span>
+
+<span class="v">Q1 [PASS] 我投了多少钱？</span>
+<span class="v">Q2 [PASS] 什么时候能拿回来？</span>
+<span class="req">Q3 [FAIL] 上季度分了多少？</span>
+<span class="req">      原因: cashflow未接入 → 科技修复</span>
+
+<span class="k">## 业务 UAT</span>
+<span class="v">数据准确性: ✓</span>
+<span class="v">回复符合预期: ✓</span>
+<span class="v">权限正确: ✓</span>
+
+<span class="k">## 上线判断</span>
+<span class="v">结论: 通过（Q3修复后上线）</span>
+<span class="v">验收确认人: _______________</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: 科技 -->
+      <div class="card-right">
+        <div class="stage-tag teal">上线前验证</div>
+        <div class="step-card" id="s4b">
+          <div class="step-head" onclick="toggleCard('s4b')">
+            <div class="step-head-inner">
+              <div class="step-title" style="font-size:13px;">接口验证</div>
+              <div class="step-desc">MCP 传递的数据本身是否正确——独立于业务场景判断</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <ul class="tasklist">
+              <li class="tec-dot">各字段返回值与来源系统（iGIMS / iGOWIN / TA）数据一致，无截断、无丢失</li>
+              <li class="tec-dot">数字单位、精度、口径与字段说明书一致（如 DPI 是小数还是百分数）</li>
+              <li class="tec-dot">权限控制正确：disclosure_level 按客户类型自动应用，越权请求返回 403</li>
+              <li class="tec-dot">错误码 / 降级逻辑正常（字段为空时返回 null 而非报错）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+
+    <!-- ══ STEP 05 · 上线 & 持续运营（业务 LEFT + 科技 RIGHT） ══ -->
+    <div class="flow-row" id="step5-row">
+      <!-- LEFT: 业务 -->
+      <div class="card-left">
+        <div class="stage-tag grn">上线后持续运作</div>
+        <div class="step-card" id="s5a">
+          <div class="step-head" onclick="toggleCard('s5a')">
+            <div class="step-head-inner">
+              <div class="step-desc">上线后业务持续使用并关注反馈：沉淀新场景，推动持续推进优化与复盘闭环</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <div class="sec-lbl">✅ 业务的日常运营职责</div>
+            <ul class="tasklist">
+              <li class="biz-dot"><strong>变更发起</strong>——任何字段变更 / 新增场景，必须由业务书面提需求，不得口头告知科技修改</li>
+              <li class="biz-dot"><strong>Bad Case 收集</strong>——日常发现 AI 回答有误，记录并提交复盘（每月至少一次正式复盘）</li>
+              <li class="biz-dot"><strong>新场景推进</strong>——持续补充场景定义表，将 P1/P2 场景逐步纳入开发排期</li>
+              <li class="biz-dot"><strong>紧急情况响应</strong>——AI 生成内容出现实质性错误，立即停止使用并通知科技</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIS -->
+      <div class="axis-node">
+        <div class="node-dot" style="border-color:var(--green);color:var(--green);">5</div>
+        <!-- change flow icons -->
+        <div class="axis-tools">
+          <button class="deliv-btn sm pulse" id="db5-change-btn" aria-label="查看变更处理流程" onclick="togglePop('pop5', 'db5-change-btn', event)">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M4 2.3h6a1.2 1.2 0 0 1 1.2 1.2v7A1.2 1.2 0 0 1 10 11.7H4A1.2 1.2 0 0 1 2.8 10.5v-7A1.2 1.2 0 0 1 4 2.3Z" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M4.6 5.1h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M4.6 7.1h3.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="deliv-pop" id="pop5" style="left:36px;top:50%;transform:translateY(-50%);">
+            <div class="pop-title">变更处理流程</div>
+            <div class="tmpl"><pre><span class="cm"># 变更处理流程（字段/口径/权限/新增场景）</span>
+
+<span class="k">01 业务书面发起</span>
+<span class="v">- 提交：变更说明、影响范围、期望上线时间、回归用例</span>
+
+<span class="k">02 科技评估与实施</span>
+<span class="v">- 评估：数据/工具/下游Agent/报表影响</span>
+<span class="v">- 实施：开发、自测、变更记录</span>
+
+<span class="k">03 合规/权限校验</span>
+<span class="v">- 若涉及披露/权限字段：对照审批文件复核</span>
+
+<span class="k">04 双方确认 → 验收 → 上线</span>
+<span class="v">- 验收：关键问题回归 &amp; 权限回归</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: 科技 -->
+      <div class="card-right">
+        <div class="stage-tag grn">上线 &amp; 持续监控</div>
+        <div class="step-card" id="s5b">
+          <div class="step-head" onclick="toggleCard('s5b')">
+            <div class="step-head-inner">
+              <div class="step-desc">运行保障：监控、告警、权限审计、故障响应与发布支持</div>
+            </div>
+            <span class="step-chevron">▶</span>
+          </div>
+          <div class="card-body">
+            <ul class="tasklist">
+              <li class="tec-dot"><strong>监控与告警</strong>——工具可用性、延迟、错误率、关键依赖（DB/API）健康度</li>
+              <li class="tec-dot"><strong>权限审计</strong>——权限规则变更留痕；定期抽查 disclosure_level / PII 截断是否符合审批</li>
+              <li class="tec-dot"><strong>故障响应</strong>——异常快速定位、临时降级/熔断、回滚与复盘（含业务通知机制）</li>
+              <li class="tec-dot"><strong>发布与变更支持</strong>——按变更流程执行灰度/窗口期上线，确保回归与验收闭环</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end flow -->
+</div><!-- end main -->
+
+<div class="footer">
+  OLIVE ASSET MANAGEMENT &nbsp;·&nbsp; MCP SOP v1.0 &nbsp;·&nbsp; 2026-04 &nbsp;·&nbsp; INTERNAL
+</div>
+
+<script>
+function toggleCard(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// Close all open popovers
+function closeAllPops(exceptId) {
+  document.querySelectorAll('.deliv-pop.open').forEach(function(p) {
+    if (p.id !== exceptId) {
+      p.classList.remove('open');
+    }
+  });
+  document.querySelectorAll('.deliv-btn.active').forEach(function(b) {
+    b.classList.remove('active');
+  });
+}
+
+function togglePop(popId, btnId, e) {
+  e.stopPropagation();
+  var pop = document.getElementById(popId);
+  var btn = document.getElementById(btnId);
+  var isOpen = pop.classList.contains('open');
+  closeAllPops(null);
+  if (!isOpen) {
+    pop.classList.add('open');
+    btn.classList.add('active');
+  }
+}
+
+// Close everything when clicking outside
+document.addEventListener('click', function() {
+  closeAllPops(null);
+});
+</script>
+</body>
+</html>
